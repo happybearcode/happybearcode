@@ -25,7 +25,7 @@ def get_start_time(ticker):
 
 def get_ma7(ticker):
     """15일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute30", count=5)
+    df = pyupbit.get_ohlcv(ticker, interval="minute30", count=7)
     ma7 = df['close'].rolling(5).mean().iloc[-1]
     return ma7
 
@@ -54,7 +54,7 @@ while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-ALGO")
-        end_time = start_time + datetime.timedelta(minutes=1)
+        end_time = start_time + datetime.timedelta(minutes=30)
 
         if start_time < now < end_time - datetime.timedelta(seconds=0):
             target_price = get_target_price("KRW-ALGO", 0)
@@ -96,7 +96,7 @@ while True:
             if btc > 0:
                 upbit.sell_market_order("KRW-ALGO", btc)
         time.sleep(0.5)
-        print(now,"target_price: %s current_price: %s ma7: %s sell_price: %s" % (target_price, current_price, (ma7 < current_price),(current_price-under)))
+        print(now,"target_price: %s current_price: %s ma7: %s sell_price: %s" % (target_price, current_price, (ma7 < current_price),(target_price-under-under)))
     except Exception as e:
         print(e)
         time.sleep(0.5)
