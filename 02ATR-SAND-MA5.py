@@ -84,7 +84,7 @@ while True:
             if target_price < current_price and ma7 < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-SAND", krw*0.9995)
+                    upbit.buy_market_order("KRW-SAND", krw*0.5)
 # 매도명령 타겟가 보다 하락시 판매
             if target_price > (current_price + under):
                 btc = get_balance("SAND")
