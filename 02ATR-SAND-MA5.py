@@ -61,42 +61,41 @@ while True:
             target_price = get_target_price("KRW-SAND", 0)
             ma7 = get_ma7("KRW-SAND")
             current_price = get_current_price("KRW-SAND")
+            if (0 < current_price < 1.01):
+                under = 0.0001
+            elif (1 <= current_price < 10.1):
+                under = 0.01
+            elif (10.1 <= current_price < 101):
+                under = 0.1
+            elif (101 <= current_price < 1005):
+                under = 1
+            elif (1005 <= current_price < 10010):
+                under = 5
+            elif (10010 <= current_price < 100050):
+                under = 10
+            elif (100050 <= current_price < 500100):
+                under = 50
+            elif (500100 <= current_price < 1000500):
+                under = 100
+            elif (1000500 <= current_price < 2001000):
+                under = 500
+            elif (2001000 <= current_price):
+                under = 1000
             if target_price < current_price and ma7 < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
                     upbit.buy_market_order("KRW-SAND", krw*0.9995)
-        # else:
-        #     btc = get_balance("SAND")
-        #     if btc > 0:
-        #         upbit.sell_market_order("KRW-SAND", btc)
-# 타겟가 보다 하락시 판매
-        if (0 < current_price < 1.01):
-            under = 0.0001
-        elif (1 <= current_price < 10.1):
-            under = 0.01
-        elif (10.1 <= current_price < 101):
-            under = 0.1
-        elif (101 <= current_price < 1005):
-            under = 1
-        elif (1005 <= current_price < 10010):
-            under = 5
-        elif (10010 <= current_price < 100050):
-            under = 10
-        elif (100050 <= current_price < 500100):
-            under = 50
-        elif (500100 <= current_price < 1000500):
-            under = 100
-        elif (1000500 <= current_price < 2001000):
-            under = 500
-        elif (2001000 <= current_price):
-            under = 1000
+# 매도명령 타겟가 보다 하락시 판매
+            if target_price > (current_price + under):
+                btc = get_balance("SAND")
+                if btc > 0:
+                    upbit.sell_market_order("KRW-SAND", btc)
+                    max_price = target_price
         
-# 매도명령 LOW
-        if target_price > (current_price + under):
+        else:
             btc = get_balance("SAND")
             if btc > 0:
                 upbit.sell_market_order("KRW-SAND", btc)
-                max_price = target_price
 
 #         elif (max_price < current_price):
 #              max_price = current_price
