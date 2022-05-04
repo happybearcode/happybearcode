@@ -55,7 +55,7 @@ while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-ALGO")
-        end_time = start_time + datetime.timedelta(minutes=10)
+        end_time = start_time + datetime.timedelta(minutes=30)
 
         if start_time < now < end_time - datetime.timedelta(seconds=1):
             target_price = get_target_price("KRW-ALGO", 0)
