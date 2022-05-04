@@ -85,14 +85,14 @@ while True:
                 krw = get_balance("KRW")
                 if krw > 5000:
                     upbit.buy_market_order("KRW-ZRX", krw*0.2)
-                    time.sleep(1)
+                    time.sleep(0.5)
 # 매도명령 타겟가 보다 하락시 판매
             if target_price > (current_price + under):
                 btc = get_balance("ZRX")
                 if btc > 0:
                     upbit.sell_market_order("KRW-ZRX", btc)
                     max_price = target_price
-                    time.sleep(0.5)
+                 
         
         else:
             btc = get_balance("ZRX")
