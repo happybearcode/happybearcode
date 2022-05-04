@@ -8,7 +8,7 @@ secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
 
 def get_target_price(ticker, k):
     """변동성 돌파 전략으로 매수 목표가 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute30", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=2)
     range = (df.iloc[0]['open'] - df.iloc[0]['close']) * k
     target_price = np.where(df.iloc[0]['open'] > df.iloc[0]['open'] + range,
                         df.iloc[1]['open'] + (range * -1),
@@ -19,13 +19,13 @@ def get_target_price(ticker, k):
 
 def get_start_time(ticker):
     """시작 시간 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute30", count=1)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=1)
     start_time = df.index[0]
     return start_time
 
 def get_ma7(ticker):
     """15일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute30", count=7)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=5)
     ma7 = df['close'].rolling(5).mean().iloc[-1]
     return ma7
 
@@ -49,14 +49,15 @@ def get_current_price(ticker):
 upbit = pyupbit.Upbit(access, secret)
 print("autotrade start")
 
+max_price = 0
 # 자동매매 시작
 while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-SAND")
-        end_time = start_time + datetime.timedelta(minutes=30)
+        end_time = start_time + datetime.timedelta(minutes=10)
 
-        if start_time < now < end_time - datetime.timedelta(seconds=0):
+        if start_time < now < end_time - datetime.timedelta(seconds=1):
             target_price = get_target_price("KRW-SAND", 0)
             ma7 = get_ma7("KRW-SAND")
             current_price = get_current_price("KRW-SAND")
@@ -90,13 +91,28 @@ while True:
         elif (2001000 <= current_price):
             under = 1000
         
-
+# 매도명령 LOW
         if target_price > (current_price + under):
             btc = get_balance("SAND")
             if btc > 0:
                 upbit.sell_market_order("KRW-SAND", btc)
+                max_price = target_price
+
+#         elif (max_price < current_price):
+#              max_price = current_price
+
+# # 매도명령 HIGH
+#         if max_price > current_price and current_price > (target_price + under + under):
+#             if max_price > current_price + under +under:
+#                 btc = get_balance("SAND")
+#                 if btc > 0:
+#                     upbit.sell_market_order("KRW-SAND", btc)
+#                     max_price = current_price
+
+
         time.sleep(0.5)
-        print(now,"target_price: %s current_price: %s ma7: %s sell_price: %s" % (target_price, current_price, (ma7 < current_price),(target_price-under-under)))
+        # print(now,"TP: %s  CP: %s  Max_P: %s  MA5: %s    HighSell_P: %s  LowSell_P: %s" %
+        #      (target_price, current_price, max_price, (ma7 < current_price), (max_price-under-under-under), (target_price-under-under)))
     except Exception as e:
         print(e)
         time.sleep(0.5)
