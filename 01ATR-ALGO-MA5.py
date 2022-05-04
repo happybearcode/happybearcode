@@ -84,14 +84,15 @@ while True:
             if target_price < current_price and ma7 < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-ALGO", krw*0.5)
+                    upbit.buy_market_order("KRW-ALGO", krw*0.25)
+                    time.sleep(0.5)
 # 매도명령 타겟가 보다 하락시 판매
             if target_price > (current_price + under):
                 btc = get_balance("ALGO")
                 if btc > 0:
                     upbit.sell_market_order("KRW-ALGO", btc)
                     max_price = target_price
-                    time.sleep(0.5)
+                    
         
         else:
             btc = get_balance("ALGO")
