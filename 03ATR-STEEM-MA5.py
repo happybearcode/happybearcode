@@ -54,13 +54,13 @@ max_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-HUM")
+        start_time = get_start_time("KRW-STEEM")
         end_time = start_time + datetime.timedelta(minutes=30)
 
         if start_time < now < end_time - datetime.timedelta(seconds=1):
-            target_price = get_target_price("KRW-HUM", 0)
-            ma7 = get_ma7("KRW-HUM")
-            current_price = get_current_price("KRW-HUM")
+            target_price = get_target_price("KRW-STEEM", 0)
+            ma7 = get_ma7("KRW-STEEM")
+            current_price = get_current_price("KRW-STEEM")
             if (0 < current_price < 1.01):
                 under = 0.0001
             elif (1 <= current_price < 10.1):
@@ -84,20 +84,21 @@ while True:
             if target_price < current_price and ma7 < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-HUM", krw*0.9995)
-                    time.sleep(0.5)
-                    
+                    upbit.buy_market_order("KRW-STEEM", krw*0.1)
+                    time.sleep(0.3)
 # 매도명령 타겟가 보다 하락시 판매
-            if target_price > (current_price + under):
-                btc = get_balance("HUM")
+            if target_price > (current_price + (under*0.5)):
+                btc = get_balance("STEEM")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-HUM", btc)
+                    upbit.sell_market_order("KRW-STEEM", btc*0.1)
                     max_price = target_price
+                    
         
         else:
-            btc = get_balance("HUM")
+            btc = get_balance("STEEM")
             if btc > 0:
-                upbit.sell_market_order("KRW-HUM", btc)
+                upbit.sell_market_order("KRW-STEEM", btc)
+                
 
 #         elif (max_price < current_price):
 #              max_price = current_price
@@ -105,9 +106,9 @@ while True:
 # # 매도명령 HIGH
 #         if max_price > current_price and current_price > (target_price + under + under):
 #             if max_price > current_price + under +under:
-#                 btc = get_balance("HUM")
+#                 btc = get_balance("STEEM")
 #                 if btc > 0:
-#                     upbit.sell_market_order("KRW-HUM", btc)
+#                     upbit.sell_market_order("KRW-STEEM", btc)
 #                     max_price = current_price
 
 
