@@ -57,7 +57,7 @@ while True:
         start_time = get_start_time("KRW-ZRX")
         end_time = start_time + datetime.timedelta(minutes=30)
 
-        if start_time < now < end_time - datetime.timedelta(seconds=1):
+        if start_time < now < end_time + datetime.timedelta(seconds=1):
             target_price = get_target_price("KRW-ZRX", 0)
             ma7 = get_ma7("KRW-ZRX")
             current_price = get_current_price("KRW-ZRX")
@@ -84,20 +84,20 @@ while True:
             if target_price < current_price and ma7 < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-ZRX", krw*0.1)
+                    upbit.buy_market_order("KRW-ZRX", krw*0.9995)
                     time.sleep(0.3)
 # 매도명령 타겟가 보다 하락시 판매
             if target_price > (current_price + (under*0.5)):
                 btc = get_balance("ZRX")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-ZRX", btc*0.1)
+                    upbit.sell_market_order("KRW-ZRX", btc)
                     max_price = target_price
-                    
-        
+       
         else:
             btc = get_balance("ZRX")
             if btc > 0:
-                upbit.sell_market_order("KRW-ZRX", btc)
+                if target_price > (current_price + (under*0.5)):
+                    upbit.sell_market_order("KRW-ZRX", btc)
                 
 
 #         elif (max_price < current_price):
