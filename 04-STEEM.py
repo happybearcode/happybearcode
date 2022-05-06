@@ -23,11 +23,11 @@ def get_start_time(ticker):
     start_time = df.index[0]
     return start_time
 
-def get_ma7(ticker):
+def get_ma5(ticker):
     """15일 이동 평균선 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute60", count=5)
-    ma7 = df['close'].rolling(5).mean().iloc[-1]
-    return ma7
+    ma5 = df['close'].rolling(5).mean().iloc[-1]
+    return ma5
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -59,7 +59,7 @@ while True:
 
         if start_time < now < end_time + datetime.timedelta(seconds=1):
             target_price = get_target_price("KRW-STEEM", 0)
-            ma7 = get_ma7("KRW-STEEM")
+            ma5 = get_ma5("KRW-STEEM")
             current_price = get_current_price("KRW-STEEM")
             if (0 < current_price < 1.01):
                 under = 0.0001
@@ -81,23 +81,22 @@ while True:
                 under = 500
             elif (2001000 <= current_price):
                 under = 1000
-            if target_price < current_price and ma7 < current_price:
+            if target_price < current_price and ma5 < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
                     upbit.buy_market_order("KRW-STEEM", krw*0.9995)
                     time.sleep(0.3)
 # 매도명령 타겟가 보다 하락시 판매
-            if target_price > (current_price + (under*0.5)):
+            if target_price > current_price or ma5 > current_price:
                 btc = get_balance("STEEM")
                 if btc > 0:
                     upbit.sell_market_order("KRW-STEEM", btc)
-                    max_price = target_price
        
-        else:
-            btc = get_balance("STEEM")
-            if btc > 0:
-                if target_price > (current_price + (under*0.5)):
-                    upbit.sell_market_order("KRW-STEEM", btc)
+        # else:
+        #     btc = get_balance("STEEM")
+        #     if btc > 0:
+        #         if target_price > (current_price + (under)):
+        #             upbit.sell_market_order("KRW-STEEM", btc)
                 
 
 #         elif (max_price < current_price):
@@ -114,7 +113,7 @@ while True:
 
         time.sleep(0.3)
         # print(now,"TP: %s  CP: %s  Max_P: %s  MA5: %s    HighSell_P: %s  LowSell_P: %s" %
-        #      (target_price, current_price, max_price, (ma7 < current_price), (max_price-under-under-under), (target_price-under-under)))
+        #      (target_price, current_price, max_price, (ma5 < current_price), (max_price-under-under-under), (target_price-under-under)))
     except Exception as e:
         print(e)
         time.sleep(0.3)
