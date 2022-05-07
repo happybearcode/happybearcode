@@ -78,17 +78,17 @@ max_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-SAND")
+        start_time = get_start_time("KRW-GMT")
         end_time = start_time + datetime.timedelta(minutes=60)
 
         if start_time < now < end_time + datetime.timedelta(seconds=1):
-            target_price = get_target_price("KRW-SAND", 0)
-            ma2 = get_ma2("KRW-SAND")
-            ma3 = get_ma3("KRW-SAND")
-            ma4 = get_ma4("KRW-SAND")
-            ma5 = get_ma5("KRW-SAND")
-            ma20 = get_ma20("KRW-SAND")
-            current_price = get_current_price("KRW-SAND")
+            target_price = get_target_price("KRW-GMT", 0)
+            ma2 = get_ma2("KRW-GMT")
+            ma3 = get_ma3("KRW-GMT")
+            ma4 = get_ma4("KRW-GMT")
+            ma5 = get_ma5("KRW-GMT")
+            ma20 = get_ma20("KRW-GMT")
+            current_price = get_current_price("KRW-GMT")
             if (0 < current_price < 1.01):
                 under = 0.0001
             elif (1 <= current_price < 10.1):
@@ -112,19 +112,19 @@ while True:
             if ma2 > ma3 > ma4 > ma5:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-SAND", krw*0.9995)
+                    upbit.buy_market_order("KRW-GMT", krw*0.9995)
                     time.sleep(0.1)
 # 매도명령 타겟가 보다 하락시 판매
             else:
-                btc = get_balance("SAND")
+                btc = get_balance("GMT")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-SAND", btc)
+                    upbit.sell_market_order("KRW-GMT", btc)
        
         # else:
-        #     btc = get_balance("SAND")
+        #     btc = get_balance("GMT")
         #     if btc > 0:
         #         if target_price > (current_price + (under)):
-        #             upbit.sell_market_order("KRW-SAND", btc)
+        #             upbit.sell_market_order("KRW-GMT", btc)
                 
 
 #         elif (max_price < current_price):
@@ -133,15 +133,15 @@ while True:
 # # 매도명령 HIGH
 #         if max_price > current_price and current_price > (target_price + under + under):
 #             if max_price > current_price + under +under:
-#                 btc = get_balance("SAND")
+#                 btc = get_balance("GMT")
 #                 if btc > 0:
-#                     upbit.sell_market_order("KRW-SAND", btc)
+#                     upbit.sell_market_order("KRW-GMT", btc)
 #                     max_price = current_price
 
 
         time.sleep(0.5)
-        print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s" %
-             (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5)))
+        # print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s" %
+        #      (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5)))
         # print(now)
         # print("TP: %.1f" %(target_price))
         # print("CP: %.1f" %(current_price))
