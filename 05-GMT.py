@@ -109,11 +109,13 @@ while True:
                 under = 500
             elif (2001000 <= current_price):
                 under = 1000
-            if ma2 > ma3 > ma4 > ma5:
+            if current_price > ma20 and ma2 > ma3 > ma4 > ma5:
                 krw = get_balance("KRW")
-                if krw > 5000:
+                if (krw*0.25) > 5000:
+                    upbit.buy_market_order("KRW-GMT", (krw*0.25)*0.9995)
+                if (krw*0.25) < 5000:
                     upbit.buy_market_order("KRW-GMT", krw*0.9995)
-                    time.sleep(0.1)
+                time.sleep(0.2)
 # 매도명령 타겟가 보다 하락시 판매
             else:
                 btc = get_balance("GMT")
