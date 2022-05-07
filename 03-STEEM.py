@@ -10,11 +10,11 @@ def get_target_price(ticker, k):
     """변동성 돌파 전략으로 매수 목표가 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
     range = (df.iloc[0]['open'] - df.iloc[0]['close']) * k
-    target_price = df.iloc[1]['open']
+    target_price = df.iloc[0]['close']
     high = df.iloc[1]['high']
     low = df.iloc[1]['low']
 
-    print("target_price: %f close: %f high: %f low: %f open: %f open2: %f range: %f" % (target_price, df.iloc[0]['close'], df.iloc[0]['high'], df.iloc[0]['low'], df.iloc[0]['open'], df.iloc[1]['open'], range))
+    # print("target_price: %.1f close: %.1f high: %.1f low: %.1f open: %.1f open2: %.1f range: %.1f" % (target_price, df.iloc[0]['close'], df.iloc[0]['high'], df.iloc[0]['low'], df.iloc[0]['open'], df.iloc[1]['open'], range))
     return target_price
 
 def get_start_time(ticker):
@@ -23,11 +23,35 @@ def get_start_time(ticker):
     start_time = df.index[0]
     return start_time
 
+def get_ma2(ticker):
+    """2일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
+    ma2 = df['close'].rolling(2).mean().iloc[-1]
+    return ma2
+
+def get_ma3(ticker):
+    """3일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=3)
+    ma3 = df['close'].rolling(3).mean().iloc[-1]
+    return ma3
+
+def get_ma4(ticker):
+    """4일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=4)
+    ma4 = df['close'].rolling(4).mean().iloc[-1]
+    return ma4
+
 def get_ma5(ticker):
-    """15일 이동 평균선 조회"""
+    """5일 이동 평균선 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute60", count=5)
     ma5 = df['close'].rolling(5).mean().iloc[-1]
     return ma5
+
+def get_ma20(ticker):
+    """5일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=20)
+    ma20 = df['close'].rolling(20).mean().iloc[-1]
+    return ma20
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -59,7 +83,11 @@ while True:
 
         if start_time < now < end_time + datetime.timedelta(seconds=1):
             target_price = get_target_price("KRW-STEEM", 0)
+            ma2 = get_ma2("KRW-STEEM")
+            ma3 = get_ma3("KRW-STEEM")
+            ma4 = get_ma4("KRW-STEEM")
             ma5 = get_ma5("KRW-STEEM")
+            ma20 = get_ma20("KRW-STEEM")
             current_price = get_current_price("KRW-STEEM")
             if (0 < current_price < 1.01):
                 under = 0.0001
@@ -81,13 +109,13 @@ while True:
                 under = 500
             elif (2001000 <= current_price):
                 under = 1000
-            if target_price < current_price and ma5 < current_price:
+            if ma2 > ma3 > ma4 > ma5:
                 krw = get_balance("KRW")
                 if krw > 5000:
                     upbit.buy_market_order("KRW-STEEM", krw*0.9995)
-                    time.sleep(0.3)
+                    time.sleep(0.1)
 # 매도명령 타겟가 보다 하락시 판매
-            if target_price > current_price or ma5 > current_price:
+            else:
                 btc = get_balance("STEEM")
                 if btc > 0:
                     upbit.sell_market_order("KRW-STEEM", btc)
@@ -111,9 +139,22 @@ while True:
 #                     max_price = current_price
 
 
-        time.sleep(0.3)
-        # print(now,"TP: %s  CP: %s  Max_P: %s  MA5: %s    HighSell_P: %s  LowSell_P: %s" %
-        #      (target_price, current_price, max_price, (ma5 < current_price), (max_price-under-under-under), (target_price-under-under)))
+        time.sleep(0.5)
+        print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s" %
+             (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5)))
+        # print(now)
+        # print("TP: %.1f" %(target_price))
+        # print("CP: %.1f" %(current_price))
+        # print("Ma2: %.1f" %(current_price))
+        # print("current_price>ma2: %s" %(current_price>ma2))
+        # print("Ma3: %.1f" %(ma3))
+        # print("ma2>ma3: %s" %(ma2>ma3))
+        # print("Ma4: %.1f" %(ma4))
+        # print("ma3>ma4: %s" %(ma3>ma4))
+        # print("Ma5: %.1f" %(ma5))
+        # print("ma4>ma5: %s" %(ma4>ma5))
+
+
     except Exception as e:
         print(e)
-        time.sleep(0.3)
+        time.sleep(0)
