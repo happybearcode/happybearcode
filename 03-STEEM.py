@@ -89,72 +89,27 @@ while True:
             ma5 = get_ma5("KRW-STEEM")
             ma20 = get_ma20("KRW-STEEM")
             current_price = get_current_price("KRW-STEEM")
-            if (0 < current_price < 1.01):
-                under = 0.0001
-            elif (1 <= current_price < 10.1):
-                under = 0.01
-            elif (10.1 <= current_price < 101):
-                under = 0.1
-            elif (101 <= current_price < 1005):
-                under = 1
-            elif (1005 <= current_price < 10010):
-                under = 5
-            elif (10010 <= current_price < 100050):
-                under = 10
-            elif (100050 <= current_price < 500100):
-                under = 50
-            elif (500100 <= current_price < 1000500):
-                under = 100
-            elif (1000500 <= current_price < 2001000):
-                under = 500
-            elif (2001000 <= current_price):
-                under = 1000
-            if ma2 > ma3 > ma4 > ma5:
+            
+# 매수 조건
+            if current_price > ma20 and ma2 > ma3 > ma4 > ma5:
                 krw = get_balance("KRW")
-                if krw > 5000:
+                if (krw*0.25) > 5000:
+                    upbit.buy_market_order("KRW-STEEM", (krw*0.25)*0.9995)
+                if (krw*0.25) < 5000:
                     upbit.buy_market_order("KRW-STEEM", krw*0.9995)
-                    time.sleep(0.1)
-# 매도명령 타겟가 보다 하락시 판매
+                time.sleep(0.2)
+# 매도 조건
             else:
                 btc = get_balance("STEEM")
                 if btc > 0:
                     upbit.sell_market_order("KRW-STEEM", btc)
        
-        # else:
-        #     btc = get_balance("STEEM")
-        #     if btc > 0:
-        #         if target_price > (current_price + (under)):
-        #             upbit.sell_market_order("KRW-STEEM", btc)
                 
-
-#         elif (max_price < current_price):
-#              max_price = current_price
-
-# # 매도명령 HIGH
-#         if max_price > current_price and current_price > (target_price + under + under):
-#             if max_price > current_price + under +under:
-#                 btc = get_balance("STEEM")
-#                 if btc > 0:
-#                     upbit.sell_market_order("KRW-STEEM", btc)
-#                     max_price = current_price
-
 
         time.sleep(0.5)
         # print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s" %
         #      (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5)))
-        # print(now)
-        # print("TP: %.1f" %(target_price))
-        # print("CP: %.1f" %(current_price))
-        # print("Ma2: %.1f" %(current_price))
-        # print("current_price>ma2: %s" %(current_price>ma2))
-        # print("Ma3: %.1f" %(ma3))
-        # print("ma2>ma3: %s" %(ma2>ma3))
-        # print("Ma4: %.1f" %(ma4))
-        # print("ma3>ma4: %s" %(ma3>ma4))
-        # print("Ma5: %.1f" %(ma5))
-        # print("ma4>ma5: %s" %(ma4>ma5))
-
-
+  
     except Exception as e:
         print(e)
         time.sleep(0)
