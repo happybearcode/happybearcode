@@ -48,9 +48,9 @@ def get_ma5(ticker):
     return ma5
 
 def get_ma15(ticker):
-    """20일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=10)
-    ma15 = df['close'].rolling(10).mean().iloc[-1]
+    """15일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=15)
+    ma15 = df['close'].rolling(15).mean().iloc[-1]
     return ma15
 
 def get_balance(ticker):
@@ -79,7 +79,7 @@ while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-ZRX")
-        end_time = start_time + datetime.timedelta(minutes=120)
+        end_time = start_time + datetime.timedelta(minutes=60)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
             target_price = get_target_price("KRW-ZRX", 0)
