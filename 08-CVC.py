@@ -112,7 +112,7 @@ while True:
         
             
 # 매수 조건
-            if current_price-(under*0.5) > ma2 > ma3 > ma4 > ma5 > ma20:
+            if current_price > ma2 > ma3 > ma4 > ma5 > ma20:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-CVC", (krw*0.25)*0.9995)
