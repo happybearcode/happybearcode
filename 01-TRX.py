@@ -116,16 +116,16 @@ while True:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-TRX", (krw*0.25)*0.9995)
-                time.sleep(0.2)
+                time.sleep(0.4)
 # 매도 조건
-            elif current_price < ma15:
+            elif current_price < ma15 or ma5 > ma2:
                 btc = get_balance("TRX")
                 if btc > 0:
                     upbit.sell_market_order("KRW-TRX", btc)
         else:
             btc = get_balance("TRX")
             if btc > 0:
-                upbit.sell_market_order("KRW-TRX", btc*0.25)
+                upbit.sell_market_order("KRW-TRX", btc*0.1)
                 
 
         time.sleep(0.5)
