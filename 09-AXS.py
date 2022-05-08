@@ -47,11 +47,11 @@ def get_ma5(ticker):
     ma5 = df['close'].rolling(5).mean().iloc[-1]
     return ma5
 
-def get_ma20(ticker):
-    """20일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=20)
-    ma20 = df['close'].rolling(20).mean().iloc[-1]
-    return ma20
+def get_ma15(ticker):
+    """15일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=15)
+    ma15 = df['close'].rolling(15).mean().iloc[-1]
+    return ma15
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -87,7 +87,7 @@ while True:
             ma3 = get_ma3("KRW-AXS")
             ma4 = get_ma4("KRW-AXS")
             ma5 = get_ma5("KRW-AXS")
-            ma20 = get_ma20("KRW-AXS")
+            ma15 = get_ma15("KRW-AXS")
             current_price = get_current_price("KRW-AXS")
             if (0 < current_price < 1.01):
                 under = 0.0001
@@ -112,13 +112,13 @@ while True:
         
             
 # 매수 조건
-            if current_price-(under*0.5) > ma2 > ma3 > ma4 > ma5 > ma20:
+            if current_price > ma2 > ma3 > ma4 > ma5 > ma15:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-AXS", (krw*0.25)*0.9995)
                 time.sleep(0.4)
 # 매도 조건
-            elif current_price < ma20:
+            elif current_price < ma15 or ma5 > ma2:
                 btc = get_balance("AXS")
                 if btc > 0:
                     upbit.sell_market_order("KRW-AXS", btc)
