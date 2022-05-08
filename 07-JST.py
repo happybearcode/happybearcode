@@ -48,7 +48,7 @@ def get_ma5(ticker):
     return ma5
 
 def get_ma15(ticker):
-    """20일 이동 평균선 조회"""
+    """15일 이동 평균선 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute10", count=15)
     ma15 = df['close'].rolling(15).mean().iloc[-1]
     return ma15
@@ -78,17 +78,17 @@ max_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-CVC")
+        start_time = get_start_time("KRW-JST")
         end_time = start_time + datetime.timedelta(minutes=10)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
-            target_price = get_target_price("KRW-CVC", 0)
-            ma2 = get_ma2("KRW-CVC")
-            ma3 = get_ma3("KRW-CVC")
-            ma4 = get_ma4("KRW-CVC")
-            ma5 = get_ma5("KRW-CVC")
-            ma15 = get_ma15("KRW-CVC")
-            current_price = get_current_price("KRW-CVC")
+            target_price = get_target_price("KRW-JST", 0)
+            ma2 = get_ma2("KRW-JST")
+            ma3 = get_ma3("KRW-JST")
+            ma4 = get_ma4("KRW-JST")
+            ma5 = get_ma5("KRW-JST")
+            ma15 = get_ma15("KRW-JST")
+            current_price = get_current_price("KRW-JST")
             if (0 < current_price < 1.01):
                 under = 0.0001
             elif (1 <= current_price < 10.1):
@@ -115,17 +115,17 @@ while True:
             if ma2 > ma3 > ma4 > ma15:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-CVC", (krw*0.25)*0.9995)
+                    upbit.buy_market_order("KRW-JST", (krw*0.25)*0.9995)
                 time.sleep(0.4)
 # 매도 조건
             elif current_price < ma15 or ma5 > ma2:
-                btc = get_balance("CVC")
+                btc = get_balance("JST")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-CVC", btc)
+                    upbit.sell_market_order("KRW-JST", btc)
         else:
-            btc = get_balance("CVC")
+            btc = get_balance("JST")
             if btc > 0:
-                upbit.sell_market_order("KRW-CVC", btc*0.1)
+                upbit.sell_market_order("KRW-JST", btc*0.1)
                 
 
         time.sleep(0.5)
