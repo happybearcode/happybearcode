@@ -116,21 +116,21 @@ while True:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-CVC", (krw*0.25)*0.9995)
-                time.sleep(0.2)
+                time.sleep(0.4)
 # 매도 조건
-            elif current_price < ma20:
+            elif current_price < ma20 or ma5 > ma2:
                 btc = get_balance("CVC")
                 if btc > 0:
                     upbit.sell_market_order("KRW-CVC", btc)
         else:
             btc = get_balance("CVC")
             if btc > 0:
-                upbit.sell_market_order("KRW-CVC", btc*0.25)
+                upbit.sell_market_order("KRW-CVC", btc*0.1)
                 
 
         time.sleep(0.5)
-        print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s under: %.1f" %
-             (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5), under))
+        # print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s under: %.1f" %
+        #      (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5), under))
   
     except Exception as e:
         print(e)
