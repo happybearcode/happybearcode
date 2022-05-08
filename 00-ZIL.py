@@ -48,7 +48,7 @@ def get_ma5(ticker):
     return ma5
 
 def get_ma15(ticker):
-    """20일 이동 평균선 조회"""
+    """15일 이동 평균선 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute60", count=15)
     ma15 = df['close'].rolling(15).mean().iloc[-1]
     return ma15
@@ -116,16 +116,16 @@ while True:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-ZIL", (krw*0.25)*0.9995)
-                time.sleep(0.2)
+                time.sleep(0.4)
 # 매도 조건
-            elif current_price < ma15:
+            elif current_price < ma15 or ma5 > ma2:
                 btc = get_balance("ZIL")
                 if btc > 0:
                     upbit.sell_market_order("KRW-ZIL", btc)
         else:
             btc = get_balance("ZIL")
             if btc > 0:
-                upbit.sell_market_order("KRW-ZIL", btc*0.25)
+                upbit.sell_market_order("KRW-ZIL", btc*0.1)
                 
 
         time.sleep(0.5)
