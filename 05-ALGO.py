@@ -9,10 +9,10 @@ secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
 def get_target_price(ticker, k):
     """변동성 돌파 전략으로 매수 목표가 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
-    range = (df.iloc[0]['open'] - df.iloc[0]['close']) * k
+    # range = (df.iloc[0]['open'] - df.iloc[0]['close']) * k
     target_price = df.iloc[0]['close']
-    high = df.iloc[1]['high']
-    low = df.iloc[1]['low']
+    # high = df.iloc[1]['high']
+    # low = df.iloc[1]['low']
 
     # print("target_price: %.1f close: %.1f high: %.1f low: %.1f open: %.1f open2: %.1f range: %.1f" % (target_price, df.iloc[0]['close'], df.iloc[0]['high'], df.iloc[0]['low'], df.iloc[0]['open'], df.iloc[1]['open'], range))
     return target_price
@@ -47,11 +47,11 @@ def get_ma5(ticker):
     ma5 = df['close'].rolling(5).mean().iloc[-1]
     return ma5
 
-def get_ma20(ticker):
-    """5일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=20)
-    ma20 = df['close'].rolling(20).mean().iloc[-1]
-    return ma20
+def get_ma15(ticker):
+    """20일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=10)
+    ma15 = df['close'].rolling(10).mean().iloc[-1]
+    return ma15
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -78,17 +78,17 @@ max_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-GMT")
-        end_time = start_time + datetime.timedelta(minutes=60)
+        start_time = get_start_time("KRW-ALGO")
+        end_time = start_time + datetime.timedelta(minutes=120)
 
-        if start_time < now < end_time + datetime.timedelta(seconds=1):
-            target_price = get_target_price("KRW-GMT", 0)
-            ma2 = get_ma2("KRW-GMT")
-            ma3 = get_ma3("KRW-GMT")
-            ma4 = get_ma4("KRW-GMT")
-            ma5 = get_ma5("KRW-GMT")
-            ma20 = get_ma20("KRW-GMT")
-            current_price = get_current_price("KRW-GMT")
+        if start_time < now < end_time - datetime.timedelta(seconds=2):
+            target_price = get_target_price("KRW-ALGO", 0)
+            ma2 = get_ma2("KRW-ALGO")
+            ma3 = get_ma3("KRW-ALGO")
+            ma4 = get_ma4("KRW-ALGO")
+            ma5 = get_ma5("KRW-ALGO")
+            ma15 = get_ma15("KRW-ALGO")
+            current_price = get_current_price("KRW-ALGO")
             if (0 < current_price < 1.01):
                 under = 0.0001
             elif (1 <= current_price < 10.1):
@@ -109,19 +109,23 @@ while True:
                 under = 500
             elif (2001000 <= current_price):
                 under = 1000
+        
             
 # 매수 조건
-            if current_price > ma2 > ma3 > ma4 > ma5:
+            if current_price-(under*0.5) > ma2 > ma3 > ma4 > ma5 > ma15:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-GMT", (krw*0.25)*0.9995)
+                    upbit.buy_market_order("KRW-ALGO", (krw*0.25)*0.9995)
                 time.sleep(0.2)
 # 매도 조건
-            else:
-                btc = get_balance("GMT")
+            elif current_price < ma15:
+                btc = get_balance("ALGO")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-GMT", btc)
-       
+                    upbit.sell_market_order("KRW-ALGO", btc)
+        else:
+            btc = get_balance("ALGO")
+            if btc > 0:
+                upbit.sell_market_order("KRW-ALGO", btc*0.25)
                 
 
         time.sleep(0.5)
