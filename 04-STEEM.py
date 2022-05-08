@@ -112,7 +112,7 @@ while True:
         
             
 # 매수 조건
-            if current_price > ma2 > ma3 > ma4 > ma5 > ma15:
+            if ma2 > ma3 > ma4 > ma5 > ma15:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-STEEM", (krw*0.25)*0.9995)
@@ -134,4 +134,4 @@ while True:
   
     except Exception as e:
         print(e)
-        time.sleep(0)
+        time.sleep(0.1)
