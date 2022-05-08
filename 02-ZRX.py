@@ -8,7 +8,7 @@ secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
 
 def get_target_price(ticker, k):
     """변동성 돌파 전략으로 매수 목표가 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=2)
     # range = (df.iloc[0]['open'] - df.iloc[0]['close']) * k
     target_price = df.iloc[0]['close']
     # high = df.iloc[1]['high']
@@ -19,37 +19,37 @@ def get_target_price(ticker, k):
 
 def get_start_time(ticker):
     """시작 시간 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=1)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=1)
     start_time = df.index[0]
     return start_time
 
 def get_ma2(ticker):
     """2일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=2)
     ma2 = df['close'].rolling(2).mean().iloc[-1]
     return ma2
 
 def get_ma3(ticker):
     """3일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=3)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=3)
     ma3 = df['close'].rolling(3).mean().iloc[-1]
     return ma3
 
 def get_ma4(ticker):
     """4일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=4)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=4)
     ma4 = df['close'].rolling(4).mean().iloc[-1]
     return ma4
 
 def get_ma5(ticker):
     """5일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=5)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=5)
     ma5 = df['close'].rolling(5).mean().iloc[-1]
     return ma5
 
 def get_ma15(ticker):
     """15일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=15)
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=15)
     ma15 = df['close'].rolling(15).mean().iloc[-1]
     return ma15
 
@@ -79,7 +79,7 @@ while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-ZRX")
-        end_time = start_time + datetime.timedelta(minutes=60)
+        end_time = start_time + datetime.timedelta(minutes=10)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
             target_price = get_target_price("KRW-ZRX", 0)
@@ -116,16 +116,16 @@ while True:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-ZRX", (krw*0.25)*0.9995)
-                time.sleep(0.2)
+                time.sleep(0.4)
 # 매도 조건
-            elif current_price < ma15:
+            elif current_price < ma15 or ma5 > ma2:
                 btc = get_balance("ZRX")
                 if btc > 0:
                     upbit.sell_market_order("KRW-ZRX", btc)
         else:
             btc = get_balance("ZRX")
             if btc > 0:
-                upbit.sell_market_order("KRW-ZRX", btc*0.25)
+                upbit.sell_market_order("KRW-ZRX", btc*0.1)
                 
 
         time.sleep(0.5)
