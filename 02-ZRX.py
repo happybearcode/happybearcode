@@ -89,14 +89,32 @@ while True:
             ma5 = get_ma5("KRW-ZRX")
             ma20 = get_ma20("KRW-ZRX")
             current_price = get_current_price("KRW-ZRX")
+            if (0 < current_price < 1.01):
+                under = 0.0001
+            elif (1 <= current_price < 10.1):
+                under = 0.01
+            elif (10.1 <= current_price < 101):
+                under = 0.1
+            elif (101 <= current_price < 1005):
+                under = 1
+            elif (1005 <= current_price < 10010):
+                under = 5
+            elif (10010 <= current_price < 100050):
+                under = 10
+            elif (100050 <= current_price < 500100):
+                under = 50
+            elif (500100 <= current_price < 1000500):
+                under = 100
+            elif (1000500 <= current_price < 2001000):
+                under = 500
+            elif (2001000 <= current_price):
+                under = 1000
             
 # 매수 조건
-            if current_price > ma20 and ma2 > ma3 > ma4 > ma5:
+            if current_price > ma2 > ma3 > ma4 > ma5:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-ZRX", (krw*0.25)*0.9995)
-                if (krw*0.25) < 5000:
-                    upbit.buy_market_order("KRW-ZRX", krw*0.9995)
                 time.sleep(0.2)
 # 매도 조건
             else:
@@ -107,8 +125,8 @@ while True:
                 
 
         time.sleep(0.5)
-        # print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s" %
-        #      (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5)))
+        print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s under: %.1f" %
+             (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5), under))
   
     except Exception as e:
         print(e)
