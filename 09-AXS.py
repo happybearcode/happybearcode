@@ -112,13 +112,13 @@ while True:
         
             
 # 매수 조건
-            if ma2 > ma3 > ma4 > ma5 > ma15:
+            if ma2 > ma3 > ma4 > ma5:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-AXS", (krw*0.25)*0.9995)
                 time.sleep(0.4)
 # 매도 조건
-            elif current_price < ma15 or ma5 > ma2:
+            elif ma5 > ma2:
                 btc = get_balance("AXS")
                 if btc > 0:
                     upbit.sell_market_order("KRW-AXS", btc)
