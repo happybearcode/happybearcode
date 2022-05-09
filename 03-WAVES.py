@@ -78,17 +78,17 @@ max_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-XTZ")
+        start_time = get_start_time("KRW-WAVES")
         end_time = start_time + datetime.timedelta(minutes=10)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
-            target_price = get_target_price("KRW-XTZ", 0)
-            ma2 = get_ma2("KRW-XTZ")
-            ma3 = get_ma3("KRW-XTZ")
-            ma4 = get_ma4("KRW-XTZ")
-            ma5 = get_ma5("KRW-XTZ")
-            ma15 = get_ma15("KRW-XTZ")
-            current_price = get_current_price("KRW-XTZ")
+            target_price = get_target_price("KRW-WAVES", 0)
+            ma2 = get_ma2("KRW-WAVES")
+            ma3 = get_ma3("KRW-WAVES")
+            ma4 = get_ma4("KRW-WAVES")
+            ma5 = get_ma5("KRW-WAVES")
+            ma15 = get_ma15("KRW-WAVES")
+            current_price = get_current_price("KRW-WAVES")
             if (0 < current_price < 1.01):
                 under = 0.0001
             elif (1 <= current_price < 10.1):
@@ -115,17 +115,17 @@ while True:
             if current_price > ma15 and ma2 > ma3 > ma4:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-XTZ", (krw*0.25)*0.9995)
+                    upbit.buy_market_order("KRW-WAVES", (krw*0.25)*0.9995)
                
 # 매도 조건
             elif current_price < ma15 or ma5 > ma2:
-                btc = get_balance("XTZ")
+                btc = get_balance("WAVES")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-XTZ", btc)
+                    upbit.sell_market_order("KRW-WAVES", btc)
         else:
-            btc = get_balance("XTZ")
+            btc = get_balance("WAVES")
             if btc > 0:
-                upbit.sell_market_order("KRW-XTZ", btc*0.1)
+                upbit.sell_market_order("KRW-WAVES", btc*0.1)
                 
 
         time.sleep(0.9)
