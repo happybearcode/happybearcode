@@ -78,17 +78,17 @@ max_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-GMT")
+        start_time = get_start_time("KRW-SBD")
         end_time = start_time + datetime.timedelta(minutes=10)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
-            target_price = get_target_price("KRW-GMT", 0)
-            ma2 = get_ma2("KRW-GMT")
-            ma3 = get_ma3("KRW-GMT")
-            ma4 = get_ma4("KRW-GMT")
-            ma5 = get_ma5("KRW-GMT")
-            ma15 = get_ma15("KRW-GMT")
-            current_price = get_current_price("KRW-GMT")
+            target_price = get_target_price("KRW-SBD", 0)
+            ma2 = get_ma2("KRW-SBD")
+            ma3 = get_ma3("KRW-SBD")
+            ma4 = get_ma4("KRW-SBD")
+            ma5 = get_ma5("KRW-SBD")
+            ma15 = get_ma15("KRW-SBD")
+            current_price = get_current_price("KRW-SBD")
             if (0 < current_price < 1.01):
                 under = 0.0001
             elif (1 <= current_price < 10.1):
@@ -115,17 +115,17 @@ while True:
             if current_price > ma15 and ma2 > ma3 > ma4:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-GMT", (krw*0.25)*0.9995)
+                    upbit.buy_market_order("KRW-SBD", (krw*0.25)*0.9995)
                 
 # 매도 조건
             elif current_price < ma15 or ma5 > ma2:
-                btc = get_balance("GMT")
+                btc = get_balance("SBD")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-GMT", btc)
+                    upbit.sell_market_order("KRW-SBD", btc)
         else:
-            btc = get_balance("GMT")
+            btc = get_balance("SBD")
             if btc > 0:
-                upbit.sell_market_order("KRW-GMT", btc*0.1)
+                upbit.sell_market_order("KRW-SBD", btc*0.1)
                 
 
         time.sleep(0.9)
