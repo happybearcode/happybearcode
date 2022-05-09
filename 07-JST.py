@@ -112,11 +112,11 @@ while True:
         
             
 # 매수 조건
-            if ma2 > ma3 > ma4 > ma15:
+            if current_price > ma15 and ma2 > ma3 > ma4:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-JST", (krw*0.25)*0.9995)
-                time.sleep(0.4)
+                
 # 매도 조건
             elif current_price < ma15 or ma5 > ma2:
                 btc = get_balance("JST")
@@ -128,7 +128,7 @@ while True:
                 upbit.sell_market_order("KRW-JST", btc*0.1)
                 
 
-        time.sleep(0.5)
+        time.sleep(0.9)
         # print(now,"TP: %.1f  CP: %.1f  Ma2: %.1f  %s  Ma3: %.1f  %s  Ma4: %.1f  %s  Ma5: %.1f  %s under: %.1f" %
         #      (target_price, current_price, ma2, (current_price>ma2), ma3, (ma2>ma3), ma4, (ma3>ma4), ma5, (ma4>ma5), under))
   
