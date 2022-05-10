@@ -116,7 +116,7 @@ while True:
                 under = 1000
             
 # 매수 조건
-            if ma2 > ma4:
+            if ma2 > ma3 > ma4 and current_price:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-ZIL", krw * 0.9995)
@@ -132,8 +132,8 @@ while True:
                 
 
         time.sleep(0.5)
-        print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    %s    under: %.1f    buy_price: %.1f" %
-             (current_price, ma2, ma4, (ma2>ma4), under, buy_price))
+        print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f" %
+             (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price))
   
     except Exception as e:
         print(e)
