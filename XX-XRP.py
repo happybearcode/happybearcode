@@ -1,7 +1,6 @@
 import time
 import pyupbit
 import datetime
-import numpy as np
 
 access = "U5xb4ihuULs6I9se0g467KyNnaSwVybGlyWHTwQp"
 secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
@@ -82,17 +81,17 @@ buy_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-XRP")
+        start_time = get_start_time("KRW-ZIL")
         end_time = start_time + datetime.timedelta(minutes=10)
 
         if start_time < now < end_time - datetime.timedelta(seconds=1):
-            target_price = get_target_price("KRW-XRP", 0)
-            ma2 = get_ma2("KRW-XRP")
-            ma3 = get_ma3("KRW-XRP")
-            ma4 = get_ma4("KRW-XRP")
-            ma6 = get_ma6("KRW-XRP")
-            ma15 = get_ma15("KRW-XRP")
-            current_price = get_current_price("KRW-XRP")
+            target_price = get_target_price("KRW-ZIL", 0)
+            ma2 = get_ma2("KRW-ZIL")
+            ma3 = get_ma3("KRW-ZIL")
+            ma4 = get_ma4("KRW-ZIL")
+            ma6 = get_ma6("KRW-ZIL")
+            ma15 = get_ma15("KRW-ZIL")
+            current_price = get_current_price("KRW-ZIL")
             if (0 < current_price < 0.1):
                 under = 0.0001
             elif (0.1 <= current_price < 1):
@@ -120,21 +119,22 @@ while True:
             if ma2 > ma4:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-XRP", krw * 0.9995)
+                    upbit.buy_market_order("KRW-ZIL", krw * 0.9995)
                     buy_price = current_price
 # 매도 조건
             elif buy_price - under > current_price or ma4 > ma2:
-                btc = get_balance("XRP")
+                btc = get_balance("ZIL")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-XRP", btc)
+                    upbit.sell_market_order("KRW-ZIL", btc)
+                    buy_price = 0
 
 
                 
 
         time.sleep(0.5)
-        # print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    %s    under: %.1f    buy_price: %.1f" %
-        #      (current_price, ma2, ma4, (ma2>ma4), under, buy_price))
+        print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    %s    under: %.1f    buy_price: %.1f" %
+             (current_price, ma2, ma4, (ma2>ma4), under, buy_price))
   
     except Exception as e:
         print(e)
-        time.sleep(0.1)
+        time.sleep(0.5)
