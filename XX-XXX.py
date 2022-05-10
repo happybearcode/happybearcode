@@ -5,17 +5,6 @@ import datetime
 access = "U5xb4ihuULs6I9se0g467KyNnaSwVybGlyWHTwQp"
 secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
 
-def get_target_price(ticker, k):
-    """변동성 돌파 전략으로 매수 목표가 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=2)
-    # range = (df.iloc[0]['open'] - df.iloc[0]['close']) * k
-    target_price = df.iloc[0]['close']
-    # high = df.iloc[1]['high']
-    # low = df.iloc[1]['low']
-
-    # print("target_price: %.1f close: %.1f high: %.1f low: %.1f open: %.1f open2: %.1f range: %.1f" % (target_price, df.iloc[0]['close'], df.iloc[0]['high'], df.iloc[0]['low'], df.iloc[0]['open'], df.iloc[1]['open'], range))
-    return target_price
-
 def get_start_time(ticker):
     """시작 시간 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute10", count=1)
@@ -39,18 +28,6 @@ def get_ma4(ticker):
     df = pyupbit.get_ohlcv(ticker, interval="minute10", count=4)
     ma4 = df['close'].rolling(4).mean().iloc[-1]
     return ma4
-
-def get_ma6(ticker):
-    """6일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=6)
-    ma6 = df['close'].rolling(6).mean().iloc[-1]
-    return ma6
-
-def get_ma15(ticker):
-    """15일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=15)
-    ma15 = df['close'].rolling(15).mean().iloc[-1]
-    return ma15
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -85,13 +62,11 @@ while True:
         end_time = start_time + datetime.timedelta(minutes=10)
 
         if start_time < now < end_time - datetime.timedelta(seconds=1):
-            target_price = get_target_price("KRW-ZIL", 0)
             ma2 = get_ma2("KRW-ZIL")
             ma3 = get_ma3("KRW-ZIL")
             ma4 = get_ma4("KRW-ZIL")
-            ma6 = get_ma6("KRW-ZIL")
-            ma15 = get_ma15("KRW-ZIL")
             current_price = get_current_price("KRW-ZIL")
+            
             if (0 < current_price < 0.1):
                 under = 0.0001
             elif (0.1 <= current_price < 1):
@@ -131,7 +106,7 @@ while True:
 
                 
 
-        time.sleep(0.5)
+        time.sleep(0.7)
         print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f" %
              (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price))
   
