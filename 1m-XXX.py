@@ -7,39 +7,34 @@ secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
 
 def get_start_time(ticker):
     """시작 시간 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=1)
+    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=1)
     start_time = df.index[0]
     return start_time
 
 def get_low(ticker):
     """변동성 돌파 전략으로 매수 목표가 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=2)
     low = df.iloc[0]['low']
     return low
 
 def get_ma2(ticker):
     """2일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=2)
     ma2 = df['close'].rolling(2).mean().iloc[-1]
     return ma2
 
 def get_ma3(ticker):
     """3일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=3)
+    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=3)
     ma3 = df['close'].rolling(3).mean().iloc[-1]
     return ma3
 
 def get_ma4(ticker):
     """4일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=4)
+    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=4)
     ma4 = df['close'].rolling(4).mean().iloc[-1]
     return ma4
 
-def get_ma15(ticker):
-    """15일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=15)
-    ma15 = df['close'].rolling(15).mean().iloc[-1]
-    return ma15
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -71,13 +66,12 @@ while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-ZIL")
-        end_time = start_time + datetime.timedelta(minutes=1)
+        end_time = start_time + datetime.timedelta(minutes=3)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
             ma2 = get_ma2("KRW-ZIL")
             ma3 = get_ma3("KRW-ZIL")
-            ma4 = get_ma4("KRW-ZIL")
-            ma15 = get_ma15("KRW-ZIL")
+            ma4 = get_ma4("KRW-ZIL")            
             current_price = get_current_price("KRW-ZIL")
             low = get_low("KRW-ZIL")
 
@@ -121,8 +115,8 @@ while True:
                 
 
         time.sleep(0.8)
-        # print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
-        #      (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
+        print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
+             (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
   
     except Exception as e:
         print(e)
