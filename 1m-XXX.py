@@ -69,16 +69,16 @@ buy_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-ZIL")
+        start_time = get_start_time("KRW-TRX")
         end_time = start_time + datetime.timedelta(minutes=3)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
-            ma2 = get_ma2("KRW-ZIL")
-            ma3 = get_ma3("KRW-ZIL")
-            ma4 = get_ma4("KRW-ZIL")            
-            current_price = get_current_price("KRW-ZIL")
-            low = get_low("KRW-ZIL")
-            ma15 = get_ma15("KRW-ZIL")
+            ma2 = get_ma2("KRW-TRX")
+            ma3 = get_ma3("KRW-TRX")
+            ma4 = get_ma4("KRW-TRX")            
+            current_price = get_current_price("KRW-TRX")
+            low = get_low("KRW-TRX")
+            ma15 = get_ma15("KRW-TRX")
 
             if (0 < current_price < 0.1):
                 under = 0.0001
@@ -107,13 +107,13 @@ while True:
             if current_price >= low and ma2 > ma3 > ma4 and current_price > ma15 :
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-ZIL", krw * 0.9995)
+                    upbit.buy_market_order("KRW-TRX", krw * 0.9995)
                     buy_price = current_price
 # 매도 조건
             if buy_price * 0.995 > current_price or ma4 > ma2 or current_price < low or current_price < ma15:
-                btc = get_balance("ZIL")
+                btc = get_balance("TRX")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-ZIL", btc)
+                    upbit.sell_market_order("KRW-TRX", btc)
                     buy_price = 0
 
 
