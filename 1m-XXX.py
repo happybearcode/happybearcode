@@ -11,6 +11,12 @@ def get_start_time(ticker):
     start_time = df.index[0]
     return start_time
 
+def get_low(ticker):
+    """변동성 돌파 전략으로 매수 목표가 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2)
+    low = df.iloc[0]['low']
+    return low
+
 def get_ma2(ticker):
     """2일 이동 평균선 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2)
@@ -28,6 +34,12 @@ def get_ma4(ticker):
     df = pyupbit.get_ohlcv(ticker, interval="minute1", count=4)
     ma4 = df['close'].rolling(4).mean().iloc[-1]
     return ma4
+
+def get_ma15(ticker):
+    """15일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=15)
+    ma15 = df['close'].rolling(15).mean().iloc[-1]
+    return ma15
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -58,15 +70,17 @@ buy_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-STRK")
+        start_time = get_start_time("KRW-ZIL")
         end_time = start_time + datetime.timedelta(minutes=1)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
-            ma2 = get_ma2("KRW-STRK")
-            ma3 = get_ma3("KRW-STRK")
-            ma4 = get_ma4("KRW-STRK")
-            current_price = get_current_price("KRW-STRK")
-            
+            ma2 = get_ma2("KRW-ZIL")
+            ma3 = get_ma3("KRW-ZIL")
+            ma4 = get_ma4("KRW-ZIL")
+            ma15 = get_ma15("KRW-ZIL")
+            current_price = get_current_price("KRW-ZIL")
+            low = get_low("KRW-ZIL")
+
             if (0 < current_price < 0.1):
                 under = 0.0001
             elif (0.1 <= current_price < 1):
@@ -91,24 +105,24 @@ while True:
                 under = 1000
             
 # 매수 조건
-            if ma2 > ma3 > ma4:
+            if current_price >= low and ma2 > ma3 > ma4:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-STRK", krw * 0.9995)
+                    upbit.buy_market_order("KRW-ZIL", krw * 0.9995)
                     buy_price = current_price
 # 매도 조건
-            if buy_price - under > current_price or ma4 > ma2:
-                btc = get_balance("STRK")
+            if buy_price - under > current_price or ma4 > ma2 or current_price < low:
+                btc = get_balance("ZIL")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-STRK", btc)
+                    upbit.sell_market_order("KRW-ZIL", btc)
                     buy_price = 0
 
 
                 
 
-        time.sleep(0.7)
-        # print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f" %
-        #      (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price))
+        time.sleep(0.8)
+        print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
+             (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
   
     except Exception as e:
         print(e)
