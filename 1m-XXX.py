@@ -105,7 +105,7 @@ while True:
                     upbit.buy_market_order("KRW-ZIL", krw * 0.9995)
                     buy_price = current_price
 # 매도 조건
-            if buy_price * 0.996 > current_price or ma4 > ma2 or current_price < low:
+            if buy_price * 0.995 > current_price or ma4 > ma2 or current_price < low:
                 btc = get_balance("ZIL")
                 if btc > 0:
                     upbit.sell_market_order("KRW-ZIL", btc)
@@ -115,8 +115,8 @@ while True:
                 
 
         time.sleep(0.8)
-        # print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
-        #      (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
+        print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
+             (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
   
     except Exception as e:
         print(e)
