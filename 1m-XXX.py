@@ -121,8 +121,8 @@ while True:
                 
 
         time.sleep(0.8)
-        print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
-             (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
+        # print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
+        #      (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
   
     except Exception as e:
         print(e)
