@@ -91,7 +91,7 @@ while True:
                 under = 1000
             
 # 매수 조건
-            if ma2 > ma3 > ma4 and current_price:
+            if ma2 >= ma3 >= ma4:
                 krw = get_balance("KRW")
                 if (krw*0.25) > 5000:
                     upbit.buy_market_order("KRW-ZIL", krw * 0.9995)
