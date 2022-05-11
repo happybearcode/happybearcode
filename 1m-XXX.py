@@ -105,7 +105,7 @@ while True:
                     upbit.buy_market_order("KRW-ZIL", krw * 0.9995)
                     buy_price = current_price
 # 매도 조건
-            if buy_price - under > current_price or ma4 > ma2 or current_price < low:
+            if buy_price * 0.996 > current_price or ma4 > ma2 or current_price < low:
                 btc = get_balance("ZIL")
                 if btc > 0:
                     upbit.sell_market_order("KRW-ZIL", btc)
