@@ -86,16 +86,16 @@ buy_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-GMT")
+        start_time = get_start_time("KRW-SAND")
         end_time = start_time + datetime.timedelta(minutes=60)
 
         if start_time + datetime.timedelta(seconds=5) < now < end_time:
-            current_price = get_current_price("KRW-GMT")
-            target_price = get_target_price("KRW-GMT", 0.5)
-            open = get_open("KRW-GMT")
-            ma2 = get_ma2("KRW-GMT")
-            ma4 = get_ma4("KRW-GMT")            
-            ma15 = get_ma15("KRW-GMT")
+            current_price = get_current_price("KRW-SAND")
+            target_price = get_target_price("KRW-SAND", 0.333334)
+            open = get_open("KRW-SAND")
+            ma2 = get_ma2("KRW-SAND")
+            ma4 = get_ma4("KRW-SAND")            
+            ma15 = get_ma15("KRW-SAND")
 
             if (0 < current_price < 0.1):
                 under = 0.0001
@@ -120,26 +120,28 @@ while True:
             elif (2000000 <= current_price):
                 under = 1000
             
+            if buy_sell == 0:
 # 매수 조건
-            if current_price >= target_price and ma4 < ma2 and ma15 < current_price and open < current_price:
-                krw = get_balance("KRW")
-                if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-GMT", krw * 0.9995)
-                    buy_price = current_price
-                    buy_sell = 1
+                if current_price >= target_price and ma4 < ma2 and ma15 < current_price and open < current_price:
+                    krw = get_balance("KRW")
+                    if (krw*0.35) > 5000:
+                        upbit.buy_market_order("KRW-SAND", (krw*0.35) * 0.9995)
+                        buy_price = current_price
+                        buy_sell = 1
 # 매도 조건
-            if open-under > current_price:
-                btc = get_balance("GMT")
-                if btc > 0:
-                    upbit.sell_market_order("KRW-GMT", btc)
-                    buy_price = 0
-                    max_price = 0
-                    buy_sell = 0
+            else:
+                 if open-under > current_price:
+                    btc = get_balance("SAND")
+                    if btc > 0:
+                        upbit.sell_market_order("KRW-SAND", btc)
+                        buy_price = 0
+                        max_price = 0
+                        buy_sell = 0
 
 
         time.sleep(1)
-        # print(now,"    CP: %.1f    target_price: %.1f    Ma:  %s    under: %.1f    buy_price: %.1f    open: %.1f    LOW: %.1f" %
-        #      (current_price, target_price, (ma2>ma4), under, buy_price, open))
+        print(now,"    CP: %.1f    target_price: %.1f    Ma:  %s    under: %.1f    buy_price: %.1f    open: %.1f" %
+             (current_price, target_price, (ma2>ma4), under, buy_price, open))
   
     except Exception as e:
         print(e)
