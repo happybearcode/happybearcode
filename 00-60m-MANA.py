@@ -91,7 +91,7 @@ while True:
 
         if start_time + datetime.timedelta(seconds=5) < now < end_time:
             current_price = get_current_price("KRW-MANA")
-            target_price = get_target_price("KRW-MANA", 0.5)
+            target_price = get_target_price("KRW-MANA", 0.333334)
             open = get_open("KRW-MANA")
             ma2 = get_ma2("KRW-MANA")
             ma4 = get_ma4("KRW-MANA")            
