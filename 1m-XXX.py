@@ -1,9 +1,16 @@
 import time
 import pyupbit
 import datetime
+import numpy as np
 
 access = "U5xb4ihuULs6I9se0g467KyNnaSwVybGlyWHTwQp"
 secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
+
+def get_target_price(ticker, k):
+    """변동성 돌파 전략으로 매수 목표가 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=2)
+    target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
+    return target_price
 
 def get_start_time(ticker):
     """시작 시간 조회"""
@@ -15,6 +22,11 @@ def get_low(ticker):
     df = pyupbit.get_ohlcv(ticker, interval="minute3", count=2)
     low = df.iloc[0]['low']
     return low
+
+def get_open(ticker):
+    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=1)
+    open = df.iloc[0]['open']
+    return open
 
 def get_ma2(ticker):
     """2일 이동 평균선 조회"""
@@ -60,7 +72,7 @@ def get_current_price(ticker):
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
 print("autotrade start")
-avg_price = 0
+buy_sell = 0
 max_price = 0
 total_few = 0
 totalbuy_price = 0
@@ -69,16 +81,22 @@ buy_price = 0
 while True:
     try:
         now = datetime.datetime.now()
-        start_time = get_start_time("KRW-TRX")
+        start_time = get_start_time("KRW-MANA")
         end_time = start_time + datetime.timedelta(minutes=3)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
-            ma2 = get_ma2("KRW-TRX")
-            ma3 = get_ma3("KRW-TRX")
-            ma4 = get_ma4("KRW-TRX")            
-            current_price = get_current_price("KRW-TRX")
-            low = get_low("KRW-TRX")
-            ma15 = get_ma15("KRW-TRX")
+            target_price = get_target_price("KRW-MANA", 0.3)
+            current_price = get_current_price("KRW-MANA")
+            ma2 = get_ma2("KRW-MANA")
+            ma3 = get_ma3("KRW-MANA")
+            ma4 = get_ma4("KRW-MANA")            
+            low = get_low("KRW-MANA")
+            open = get_open("KRW-MANA")
+            ma15 = get_ma15("KRW-MANA")
+
+            if buy_sell == 1:
+                 if max_price < current_price:
+                    max_price = current_price
 
             if (0 < current_price < 0.1):
                 under = 0.0001
@@ -104,24 +122,30 @@ while True:
                 under = 1000
             
 # 매수 조건
-            if current_price >= low and ma2 > ma3 > ma4 and current_price > ma15 :
+            if current_price > target_price and ma4 < ma2 and ma15 < current_price and open < current_price:
                 krw = get_balance("KRW")
+                
+                
                 if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-TRX", krw * 0.9995)
+                    upbit.buy_market_order("KRW-MANA", krw * 0.9995)
                     buy_price = current_price
+                    buy_sell = 1
 # 매도 조건
-            if buy_price * 0.995 > current_price or ma4 > ma2 or current_price < low or current_price < ma15:
-                btc = get_balance("TRX")
+            if buy_price * 0.996 > current_price or current_price < low*1.005 or open > current_price:
+                btc = get_balance("MANA")
                 if btc > 0:
-                    upbit.sell_market_order("KRW-TRX", btc)
+                    upbit.sell_market_order("KRW-MANA", btc)
                     buy_price = 0
+                    max_price = 0
+                    buy_sell = 0
+                    time.sleep(10)
 
 
                 
 
         time.sleep(0.8)
-        # print(now,"CP: %.1f    Ma2: %.1f    Ma4: %.1f    Ma2+U: %.1f    Ma4-U: %.1f    %s    under: %.1f    buy_price: %.1f    LOW: %.1f" %
-        #      (current_price, ma2, ma4, ma2+under, ma4-under, (ma2>ma4), under, buy_price, low))
+        print(now,"    CP: %.1f    target_price: %.1f    Ma2: %.1f    Ma4: %.1f    %s    under: %.1f    buy_price: %.1f,  %.1f    sell_price: %.1f    LOW: %.1f" %
+             (current_price, target_price, ma2, ma4, (ma2>ma4), under, buy_price,buy_price * 0.996, max_price * 0.995, low*1.005))
   
     except Exception as e:
         print(e)
