@@ -8,47 +8,47 @@ secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
 
 def get_target_price(ticker, k):
     """변동성 돌파 전략으로 매수 목표가 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
     target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
     return target_price
 
 def get_start_time(ticker):
     """시작 시간 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=1)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=1)
     start_time = df.index[0]
     return start_time
 
 def get_low(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
     low = df.iloc[0]['low']
     return low
 
 def get_open(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=1)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=1)
     open = df.iloc[0]['open']
     return open
 
 def get_ma2(ticker):
     """2일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=2)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2)
     ma2 = df['close'].rolling(2).mean().iloc[-1]
     return ma2
 
 def get_ma3(ticker):
     """3일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=3)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=3)
     ma3 = df['close'].rolling(3).mean().iloc[-1]
     return ma3
 
 def get_ma4(ticker):
     """4일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=4)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=4)
     ma4 = df['close'].rolling(4).mean().iloc[-1]
     return ma4
 
 def get_ma15(ticker):
     """15일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute3", count=15)
+    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=15)
     ma15 = df['close'].rolling(15).mean().iloc[-1]
     return ma15
 
@@ -82,7 +82,7 @@ while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-MANA")
-        end_time = start_time + datetime.timedelta(minutes=3)
+        end_time = start_time + datetime.timedelta(minutes=60)
 
         if start_time < now < end_time - datetime.timedelta(seconds=2):
             target_price = get_target_price("KRW-MANA", 0.3)
@@ -131,7 +131,7 @@ while True:
                     buy_price = current_price
                     buy_sell = 1
 # 매도 조건
-            if buy_price * 0.996 > current_price or current_price < low*1.005 or open > current_price:
+            if buy_price * 0.996 > current_price or current_price < low*1.005 or open *0.995 > current_price:
                 btc = get_balance("MANA")
                 if btc > 0:
                     upbit.sell_market_order("KRW-MANA", btc)
@@ -145,7 +145,7 @@ while True:
 
         time.sleep(0.8)
         print(now,"    CP: %.1f    target_price: %.1f    Ma2: %.1f    Ma4: %.1f    %s    under: %.1f    buy_price: %.1f,  %.1f    sell_price: %.1f    LOW: %.1f" %
-             (current_price, target_price, ma2, ma4, (ma2>ma4), under, buy_price,buy_price * 0.996, max_price * 0.995, low*1.005))
+             (current_price, target_price, ma2, ma4, (ma2>ma4), under, buy_price,buy_price * 0.996, open *0.995, low*1.005))
   
     except Exception as e:
         print(e)
