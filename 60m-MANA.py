@@ -34,11 +34,11 @@ def get_ma2(ticker):
     ma2 = df['close'].rolling(2).mean().iloc[-1]
     return ma2
 
-def get_ma3(ticker):
-    """3일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=3)
-    ma3 = df['close'].rolling(3).mean().iloc[-1]
-    return ma3
+# def get_ma3(ticker):
+#     """3일 이동 평균선 조회"""
+#     df = pyupbit.get_ohlcv(ticker, interval="minute60", count=3)
+#     ma3 = df['close'].rolling(3).mean().iloc[-1]
+#     return ma3
 
 def get_ma4(ticker):
     """4일 이동 평균선 조회"""
@@ -88,7 +88,7 @@ while True:
             target_price = get_target_price("KRW-MANA", 0.3)
             current_price = get_current_price("KRW-MANA")
             ma2 = get_ma2("KRW-MANA")
-            ma3 = get_ma3("KRW-MANA")
+            # ma3 = get_ma3("KRW-MANA")
             ma4 = get_ma4("KRW-MANA")            
             low = get_low("KRW-MANA")
             open = get_open("KRW-MANA")
@@ -144,8 +144,8 @@ while True:
                 
 
         time.sleep(0.8)
-        print(now,"    CP: %.1f    target_price: %.1f    Ma2: %.1f    Ma4: %.1f    %s    under: %.1f    buy_price: %.1f,  %.1f    sell_price: %.1f    LOW: %.1f" %
-             (current_price, target_price, ma2, ma4, (ma2>ma4), under, buy_price,buy_price * 0.996, open *0.995, low*1.005))
+        # print(now,"    CP: %.1f    target_price: %.1f    Ma2: %.1f    Ma4: %.1f    %s    under: %.1f    buy_price: %.1f,  %.1f    sell_price: %.1f    LOW: %.1f" %
+        #      (current_price, target_price, ma2, ma4, (ma2>ma4), under, buy_price,buy_price * 0.996, open *0.995, low*1.005))
   
     except Exception as e:
         print(e)
