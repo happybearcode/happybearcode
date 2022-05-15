@@ -91,7 +91,7 @@ while True:
 
         if start_time + datetime.timedelta(seconds=5) < now < end_time:
             current_price = get_current_price("KRW-MTL")
-            target_price = get_target_price("KRW-MTL", 0.5)
+            target_price = get_target_price("KRW-MTL", 0.333334)
             open = get_open("KRW-MTL")
             ma2 = get_ma2("KRW-MTL")
             ma4 = get_ma4("KRW-MTL")            
@@ -120,26 +120,28 @@ while True:
             elif (2000000 <= current_price):
                 under = 1000
             
+            if buy_sell == 0:
 # 매수 조건
-            if current_price >= target_price and ma4 < ma2 and ma15 < current_price and open < current_price:
-                krw = get_balance("KRW")
-                if (krw*0.25) > 5000:
-                    upbit.buy_market_order("KRW-MTL", krw * 0.9995)
-                    buy_price = current_price
-                    buy_sell = 1
+                if current_price >= target_price and ma4 < ma2 and ma15 < current_price and open < current_price:
+                    krw = get_balance("KRW")
+                    if (krw*0.35) > 5000:
+                        upbit.buy_market_order("KRW-MTL", (krw*0.35) * 0.9995)
+                        buy_price = current_price
+                        buy_sell = 1
 # 매도 조건
-            if open-under > current_price:
-                btc = get_balance("MTL")
-                if btc > 0:
-                    upbit.sell_market_order("KRW-MTL", btc)
-                    buy_price = 0
-                    max_price = 0
-                    buy_sell = 0
+            else:
+                 if open-under > current_price:
+                    btc = get_balance("MTL")
+                    if btc > 0:
+                        upbit.sell_market_order("KRW-MTL", btc)
+                        buy_price = 0
+                        max_price = 0
+                        buy_sell = 0
 
 
         time.sleep(1)
-        # print(now,"    CP: %.1f    target_price: %.1f    Ma:  %s    under: %.1f    buy_price: %.1f    open: %.1f    LOW: %.1f" %
-        #      (current_price, target_price, (ma2>ma4), under, buy_price, open))
+        print(now,"    CP: %.1f    target_price: %.1f    Ma:  %s    under: %.1f    buy_price: %.1f    open: %.1f" %
+             (current_price, target_price, (ma2>ma4), under, buy_price, open))
   
     except Exception as e:
         print(e)
