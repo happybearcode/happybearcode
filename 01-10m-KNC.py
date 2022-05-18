@@ -177,8 +177,8 @@ while True:
 
 
         time.sleep(1)
-        print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f  low_buy: %.2f" %
-             (current_price, (ma2>ma3>ma4), under, buy_price, open, drop_sell, max_price * 0.997, low, low_buy))
+        # print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f  low_buy: %.2f" %
+        #      (current_price, (ma2>ma3>ma4), under, buy_price, open, drop_sell, max_price * 0.997, low, low_buy))
   
     except Exception as e:
         print(e)
