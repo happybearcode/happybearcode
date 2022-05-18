@@ -50,11 +50,11 @@ def get_ma4(ticker):
     ma4 = df['close'].rolling(4).mean().iloc[-1]
     return ma4
 
-# def get_ma15(ticker):
-#     """15일 이동 평균선 조회"""
-#     df = pyupbit.get_ohlcv(ticker, interval="minute10", count=15)
-#     ma15 = df['close'].rolling(15).mean().iloc[-1]
-#     return ma15
+def get_ma20(ticker):
+    """15일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=20)
+    ma20 = df['close'].rolling(20).mean().iloc[-1]
+    return ma20
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -79,7 +79,7 @@ print("autotrade start")
 buy_sell = 0
 max_price = 0
 drop_sell = 0
-totalbuy_price = 0
+low_buy = 0
 buy_price = 0
 # 자동매매 시작
 while True:
@@ -96,11 +96,7 @@ while True:
             ma2 = get_ma2("KRW-GMT")
             ma3 = get_ma3("KRW-GMT")
             ma4 = get_ma4("KRW-GMT")            
-            # ma15 = get_ma15("KRW-GMT")
-
-            if buy_sell == 1:
-                 if max_price < current_price:
-                    max_price = current_price
+            ma20 = get_ma20("KRW-GMT")
 
             if (0 < current_price < 0.1):
                 under = 0.0001
@@ -125,10 +121,18 @@ while True:
             elif (2000000 <= current_price):
                 under = 1000
 
+            if buy_sell == 1:
+                 if max_price < current_price:
+                    max_price = current_price
+
+            if buy_sell == 2:
+                 if low_buy > current_price:
+                    low_buy = current_price
+
 # 매수 조건            
             if buy_sell == 0:
 
-                if ma4 < ma3 < ma2 and current_price > open:
+                if ma4 < ma3 < ma2 and current_price > open and current_price > ma20:
                     krw = get_balance("KRW")
                     if (krw*0.35) > 5000:
                         upbit.buy_market_order("KRW-GMT", (krw*0.35) * 0.9995)
@@ -136,11 +140,13 @@ while True:
                         buy_sell = 1
                 
             elif buy_sell == 2:
-                if current_price > drop_sell and ma4 < ma3 < ma2 and current_price > open:
+                if current_price > low_buy + under and ma4 < ma3 < ma2 and current_price > open and current_price > ma20:
                     krw = get_balance("KRW")
                     if (krw*0.35) > 5000:
                         upbit.buy_market_order("KRW-GMT", (krw*0.35) * 0.9995)
                         buy_price = current_price
+                        low_buy = 0
+                        drop_sell = 0
                         buy_sell = 1
 # 매도 조건
             elif buy_sell == 1:
@@ -153,11 +159,12 @@ while True:
                         buy_sell = 0
                         drop_sell = 0
 
-                if max_price * 0.996 < current_price and buy_price + (under*2) < current_price or buy_price*0.996 > current_price:
+                if max_price * 0.996 < current_price and buy_price + (under*2) < current_price or buy_price*0.997 > current_price:
                     btc = get_balance("GMT")
                     if btc > 0:
                         upbit.sell_market_order("KRW-GMT", btc)
                         drop_sell = current_price
+                        low_buy = current_price
                         buy_price = 0
                         max_price = 0
                         buy_sell = 2
@@ -170,8 +177,8 @@ while True:
 
 
         time.sleep(1)
-        print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f" %
-             (current_price, (ma2>ma3>ma4), under, buy_price, open, drop_sell, max_price * 0.996, low))
+        print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f  low_buy: %.2f" %
+             (current_price, (ma2>ma3>ma4), under, buy_price, open, drop_sell, max_price * 0.997, low, low_buy))
   
     except Exception as e:
         print(e)
