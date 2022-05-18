@@ -136,7 +136,7 @@ while True:
                         buy_sell = 1
                 
             elif buy_sell == 2:
-                if current_price > drop_sell and ma4 < ma2:
+                if current_price > drop_sell and ma4 < ma3 < ma2 and current_price > open:
                     krw = get_balance("KRW")
                     if (krw*0.35) > 5000:
                         upbit.buy_market_order("KRW-KNC", (krw*0.35) * 0.9995)
