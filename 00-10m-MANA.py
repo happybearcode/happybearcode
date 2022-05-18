@@ -5,11 +5,11 @@ import datetime
 access = "U5xb4ihuULs6I9se0g467KyNnaSwVybGlyWHTwQp"
 secret = "HVowWtMp0w2FeyxiaqQqOM4tprqyPxaBfDZ9eEMx"
 
-def get_target_price(ticker, k):
-    """변동성 돌파 전략으로 매수 목표가 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=2)
-    target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
-    return target_price
+# def get_target_price(ticker, k):
+#     """변동성 돌파 전략으로 매수 목표가 조회"""
+#     df = pyupbit.get_ohlcv(ticker, interval="minute10", count=2)
+#     target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
+#     return target_price
 
 # def get_range(ticker):
 #     df = pyupbit.get_ohlcv(ticker, interval="minute10", count=2)
@@ -50,11 +50,11 @@ def get_ma4(ticker):
     ma4 = df['close'].rolling(4).mean().iloc[-1]
     return ma4
 
-def get_ma15(ticker):
-    """15일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute10", count=15)
-    ma15 = df['close'].rolling(15).mean().iloc[-1]
-    return ma15
+# def get_ma15(ticker):
+#     """15일 이동 평균선 조회"""
+#     df = pyupbit.get_ohlcv(ticker, interval="minute10", count=15)
+#     ma15 = df['close'].rolling(15).mean().iloc[-1]
+#     return ma15
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -90,13 +90,13 @@ while True:
 
         if start_time + datetime.timedelta(seconds=3) < now < end_time:
             current_price = get_current_price("KRW-MANA")
-            target_price = get_target_price("KRW-MANA", 0.333334)
+            # target_price = get_target_price("KRW-MANA", 0.333334)
             open = get_open("KRW-MANA")
             low = get_low("KRW-MANA")
             ma2 = get_ma2("KRW-MANA")
             ma3 = get_ma3("KRW-MANA")
             ma4 = get_ma4("KRW-MANA")            
-            ma15 = get_ma15("KRW-MANA")
+            # ma15 = get_ma15("KRW-MANA")
 
             if buy_sell == 1:
                  if max_price < current_price:
@@ -169,8 +169,8 @@ while True:
 
 
         time.sleep(1)
-        print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f" %
-             (current_price, (ma2>ma4), under, buy_price, open, drop_sell, max_price * 0.996, low))
+        # print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f" %
+        #      (current_price, (ma2>ma3>ma4), under, buy_price, open, drop_sell, max_price * 0.996, low))
   
     except Exception as e:
         print(e)
