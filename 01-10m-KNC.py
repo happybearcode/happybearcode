@@ -153,12 +153,13 @@ while True:
                         buy_sell = 0
                         drop_sell = 0
 
-                if max_price * 0.996 < current_price and buy_price + (under*2) < current_price:
+                if max_price * 0.996 < current_price and buy_price + (under*2) < current_price or buy_price*0.996 > current_price:
                     btc = get_balance("KNC")
                     if btc > 0:
                         upbit.sell_market_order("KRW-KNC", btc)
                         drop_sell = current_price
                         buy_price = 0
+                        max_price = 0
                         buy_sell = 2
 
         else:
@@ -169,8 +170,8 @@ while True:
 
 
         time.sleep(1)
-        # print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f" %
-        #      (current_price, (ma2>ma3>ma4), under, buy_price, open, drop_sell, max_price * 0.996, low))
+        print(now,"    CP: %.2f    Ma:  %s    under: %.2f    buy_price: %.2f    open: %.2f    drop_sell: %.2f    sell_price: %.2f    low: %.2f" %
+             (current_price, (ma2>ma3>ma4), under, buy_price, open, drop_sell, max_price * 0.996, low))
   
     except Exception as e:
         print(e)
